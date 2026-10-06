@@ -3,15 +3,8 @@ import { Flowbite, ThemeModeScript } from 'flowbite-react';
 import customTheme from './utils/theme/custom-theme';
 import router from './routes/Router';
 // import { AuthProvider } from './contexts/AuthContext';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { UploadLoadingProvider } from './contexts/UploadLoadingContext';
-import ChatbotPopup from './components/chatbot/ChatbotComponent';
-
-function ChatbotWrapper() {
-  const { user } = useAuth();
-  if (!user) return null;
-  return <ChatbotPopup />;
-}
 
 function App() {
   return (
@@ -21,7 +14,6 @@ function App() {
           <ThemeModeScript />
           <Flowbite theme={{ theme: customTheme }}>
             <RouterProvider router={router} />
-            <ChatbotWrapper />
           </Flowbite>
         </UploadLoadingProvider>
       </AuthProvider>
