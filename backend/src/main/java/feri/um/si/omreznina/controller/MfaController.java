@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.logging.Logger;
+
 @RestController
 @RequestMapping("/firestore/mfa")
 public class MfaController {
+
+	private final Logger logger = Logger.getLogger(getClass().getName());
 
 	@Autowired
 	private final MfaService mfaService;
@@ -30,14 +34,17 @@ public class MfaController {
 			mfaService.saveSettings(request.getUid(), request.getSecret(), request.isEnabled());
 			return ResponseEntity.ok("MFA nastavitve uspešno shranjene.");
 		} catch (Exception e) {
+			logger.warning("MFA setup failed for uid=" + request.getUid() + ": " + e);
 			return ResponseEntity.status(500).body("Napaka: " + e.getMessage());
 		}
 	}
 
 	@GetMapping("/{uid}")
 	public ResponseEntity<MfaSettings> getSettings(@PathVariable String uid) {
+		logger.info("MFA settings requested for uid=" + uid);
 		MfaSettings settings = firestoreService.getMfaSettings(uid);
 		if (settings == null) {
+			logger.info("No MFA settings for uid=" + uid);
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(settings);
