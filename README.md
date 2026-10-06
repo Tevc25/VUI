@@ -1,6 +1,6 @@
 # ⚡ Omrežnina+
 
-[🌐 Dostop do aplikacije](https://omreznina.netlify.app/)  
+[🌐 Dostop do aplikacije](https://curious-hamster-3d9d0d.netlify.app/)  
 [📘 Dokumentacija (GitBook)](https://omreznina.gitbook.io/omreznina+)  
 [💻 GitHub repozitorij](https://github.com/adam8kac/Omreznina)  
 [🎫 Upravljanje nalog (YouTrack)](https://omreznina.youtrack.cloud/issues)  
