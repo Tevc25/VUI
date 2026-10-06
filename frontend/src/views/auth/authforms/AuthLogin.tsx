@@ -1,5 +1,5 @@
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -13,9 +13,12 @@ import { auth } from "src/firebase-config";
 import { Icon } from "@iconify/react";
 import VerifyMfa from "src/views/mfa/VerifyMfa";
 import { getMfaSettings } from "src/index";
+import { useAuth } from "src/contexts/AuthContext";
 
 const AuthLogin = () => {
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
+  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -29,6 +32,13 @@ const AuthLogin = () => {
   const [resetEmail, setResetEmail] = useState("");
   const [resetStatus, setResetStatus] = useState("");
   const [showResendVerify, setShowResendVerify] = useState(false);
+
+  // navigate only once the auth context has picked up the user, otherwise ProtectedRoute bounces back to login
+  useEffect(() => {
+    if (loggedIn && authUser?.emailVerified) {
+      navigate("/", { replace: true });
+    }
+  }, [loggedIn, authUser, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -71,7 +81,7 @@ const AuthLogin = () => {
         setUid(user.uid);
         setShowMfa(true);
       } else {
-        navigate("/");
+        setLoggedIn(true);
       }
 
     } catch (error: any) {
@@ -122,7 +132,7 @@ const AuthLogin = () => {
 
   if (showMfa) {
     return (
-      <VerifyMfa uid={uid} onVerified={() => navigate("/")} />
+      <VerifyMfa uid={uid} onVerified={() => setLoggedIn(true)} />
     );
   }
 
