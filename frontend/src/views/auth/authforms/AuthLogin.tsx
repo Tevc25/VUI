@@ -7,6 +7,7 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   sendEmailVerification,
+  signOut,
 } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { auth } from "src/firebase-config";
@@ -76,7 +77,11 @@ const AuthLogin = () => {
         return;
       }
 
-      const mfa = await getMfaSettings(user.uid);
+      // backend (Render) se lahko zbuja ali ne odgovarja; brez timeouta prijava obvisi
+      const mfa = await Promise.race([
+        getMfaSettings(user.uid),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("mfa-timeout")), 15000)),
+      ]);
       if (mfa?.enabled) {
         setUid(user.uid);
         setShowMfa(true);
@@ -85,6 +90,11 @@ const AuthLogin = () => {
       }
 
     } catch (error: any) {
+      if (error.message === "mfa-timeout") {
+        await signOut(auth);
+        setError("Strežnik se ne odziva. Poskusite znova čez nekaj trenutkov.");
+        return;
+      }
       if (error.code === "auth/user-not-found") {
         setError("Uporabnik s tem emailom ne obstaja.");
       } else if (error.code === "auth/wrong-password") {
