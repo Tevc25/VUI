@@ -16,10 +16,13 @@ import VerifyMfa from "src/views/mfa/VerifyMfa";
 import { getMfaSettings } from "src/index";
 import { useAuth } from "src/contexts/AuthContext";
 
+export const MFA_PENDING_KEY = "mfaPending";
+
 const AuthLogin = () => {
   const navigate = useNavigate();
   const { user: authUser } = useAuth();
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [slowServer, setSlowServer] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -34,12 +37,20 @@ const AuthLogin = () => {
   const [resetStatus, setResetStatus] = useState("");
   const [showResendVerify, setShowResendVerify] = useState(false);
 
-  // navigate only once the auth context has picked up the user, otherwise ProtectedRoute bounces back to login
+  // Preusmeritev izvedemo šele, ko AuthContext že pozna uporabnika (sicer ProtectedRoute vrne nazaj na login).
+  // Velja tudi, ko uporabnik pride na /auth/login, čeprav je že prijavljen.
   useEffect(() => {
-    if (loggedIn && authUser?.emailVerified) {
+    if (submitting || showMfa || !authUser) return;
+    if (sessionStorage.getItem(MFA_PENDING_KEY)) {
+      // prijava je bila prekinjena pred vnosom kode 2FA – začni znova
+      sessionStorage.removeItem(MFA_PENDING_KEY);
+      signOut(auth);
+      return;
+    }
+    if (authUser.emailVerified) {
       navigate("/", { replace: true });
     }
-  }, [loggedIn, authUser, navigate]);
+  }, [submitting, showMfa, authUser, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,6 +73,10 @@ const AuthLogin = () => {
       return;
     }
 
+    setSubmitting(true);
+    setSlowServer(false);
+    const slowTimer = setTimeout(() => setSlowServer(true), 4000);
+
     try {
       await setPersistence(
         auth,
@@ -80,14 +95,14 @@ const AuthLogin = () => {
       // backend (Render) se lahko zbuja ali ne odgovarja; brez timeouta prijava obvisi
       const mfa = await Promise.race([
         getMfaSettings(user.uid),
-        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("mfa-timeout")), 15000)),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("mfa-timeout")), 45000)),
       ]);
       if (mfa?.enabled) {
+        sessionStorage.setItem(MFA_PENDING_KEY, "1");
         setUid(user.uid);
         setShowMfa(true);
-      } else {
-        setLoggedIn(true);
       }
+      // brez 2FA preusmeri useEffect zgoraj, ko se submitting vrne na false
 
     } catch (error: any) {
       if (error.message === "mfa-timeout") {
@@ -104,6 +119,10 @@ const AuthLogin = () => {
       } else {
         setError("Napaka pri prijavi. Preverite podatke.");
       }
+    } finally {
+      clearTimeout(slowTimer);
+      setSlowServer(false);
+      setSubmitting(false);
     }
   };
 
@@ -142,7 +161,10 @@ const AuthLogin = () => {
 
   if (showMfa) {
     return (
-      <VerifyMfa uid={uid} onVerified={() => setLoggedIn(true)} />
+      <VerifyMfa uid={uid} onVerified={() => {
+          sessionStorage.removeItem(MFA_PENDING_KEY);
+          setShowMfa(false);
+        }} />
     );
   }
 
@@ -240,8 +262,20 @@ const AuthLogin = () => {
           </div>
         )}
 
-        <Button type="submit" color="primary" className="w-full bg-primary text-white rounded-xl">
-          Prijava
+        {slowServer && (
+          <p className="text-sm text-gray-600 mb-3">
+            Strežnik se prebuja, prijava lahko traja do pol minute …
+          </p>
+        )}
+
+        <Button
+          type="submit"
+          color="primary"
+          className="w-full bg-primary text-white rounded-xl"
+          disabled={submitting}
+          isProcessing={submitting}
+        >
+          {submitting ? "Prijavljam …" : "Prijava"}
         </Button>
       </form>
     </>
