@@ -15,6 +15,11 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     return <Navigate to="/auth/login" replace />;
   }
 
+  // uporabnik z vklopljeno 2FA, ki še ni vnesel kode, ne sme mimo prijave
+  if (user && sessionStorage.getItem("mfaPending") && !publicRoutes.includes(location.pathname)) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
   if (user && !user.emailVerified && !publicRoutes.includes(location.pathname)) {
     return <Navigate to="/auth/verify-info" replace />;
   }
