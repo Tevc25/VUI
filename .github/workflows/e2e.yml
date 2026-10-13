@@ -1,11 +1,8 @@
 name: E2E Tests with Cypress
 
+# Začasno izklopljeno – poženeš ročno v zavihku Actions (Run workflow).
 on:
-  push:
-    branches:
-      - "**"
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   cypress-run:
