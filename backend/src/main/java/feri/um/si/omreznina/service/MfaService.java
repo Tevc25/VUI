@@ -16,11 +16,14 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.logging.Logger;
 
 import de.taimos.totp.TOTP;
 
 @Service
 public class MfaService {
+
+	private final Logger logger = Logger.getLogger(getClass().getName());
 
 	@Value("${mfa.secret.encryption-key}")
 	private String encryptionKey;
@@ -45,6 +48,7 @@ public class MfaService {
 			throw new IllegalArgumentException("Secret ne sme biti prazen!");
 		}
 
+		logger.info("MFA setup for uid=" + uid + ", enabled=" + enabled);
 		String encryptedSecret = encrypt(secret);
 		MfaSettings settings = new MfaSettings(uid, enabled, encryptedSecret);
 
@@ -53,9 +57,16 @@ public class MfaService {
 
 	public boolean verifyTotpCode(String uid, String code) {
 		try {
+			logger.info("MFA verify attempt for uid=" + uid);
 			MfaSettings settings = firestoreService.getMfaSettings(uid);
-			if (settings == null || !settings.isEnabled())
+			if (settings == null) {
+				logger.warning("MFA verify failed for uid=" + uid + ": no MFA settings found");
 				return false;
+			}
+			if (!settings.isEnabled()) {
+				logger.warning("MFA verify failed for uid=" + uid + ": MFA not enabled");
+				return false;
+			}
 
 			String decryptedSecret = decrypt(settings.getSecretHash());
 
@@ -64,9 +75,16 @@ public class MfaService {
 			String hexKey = Hex.encodeHexString(bytes);
 
 			String generatedCode = TOTP.getOTP(hexKey);
-			return generatedCode.equals(code);
+			boolean valid = generatedCode.equals(code);
+			if (valid) {
+				logger.info("MFA verify succeeded for uid=" + uid);
+			} else {
+				logger.warning("MFA verify failed for uid=" + uid + ": code mismatch");
+			}
+			return valid;
 
 		} catch (Exception e) {
+			logger.warning("MFA verify error for uid=" + uid + ": " + e);
 			return false;
 		}
 	}
