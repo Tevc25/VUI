@@ -1,0 +1,134 @@
+[
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/about-us",
+  "200",
+  "/, /dashboard-guide",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/auth/login",
+  "200",
+  "koda",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/auth/register",
+  "200",
+  "Login.tsx",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/auth/reset-password",
+  "200",
+  "koda",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/delete-files",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/favicon.ico",
+  "200",
+  "privzeta zahteva brskalnika",
+  "mehka 404 (vrne index.html)"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/favicon.png",
+  "200",
+  "index.html",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/monthly-consumption",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/network-fee",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/power-stats",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/prediction",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/reciept-explanation",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/robots.txt",
+  "200",
+  "standardna datoteka",
+  "mehka 404 (vrne index.html)"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/simulate-power",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/sitemap.xml",
+  "200",
+  "standardna datoteka",
+  "mehka 404 (vrne index.html)"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/upload-data",
+  "200",
+  "/, /about-us, /dashboard-guide, /delete-files, /monthly-consumption, /network-fe",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/upload-invoice",
+  "200",
+  "Router.tsx",
+  "OK"
+ ],
+ [
+  "https://curious-hamster-3d9d0d.netlify.app/upload-reciept",
+  "200",
+  "Router.tsx",
+  "OK"
+ ],
+ [
+  "https://mojelektro.si",
+  "200",
+  "nalaganje/simulacija (koda)",
+  "OK"
+ ],
+ [
+  "https://mojelektro.si/",
+  "200",
+  "/simulate-power, /upload-data",
+  "OK"
+ ],
+ [
+  "https://omreznina.netlify.app/auth/verify-info",
+  "200",
+  "AuthRegister.tsx (continueUrl e-pošte)",
+  "OK, a kaže na staro domeno"
+ ]
+]
